@@ -77,24 +77,25 @@ export default function App() {
     for (let i = 0; i < 10; i++) {
       setInterval(
         () =>
-          send({
-            body: random.message[
-              Math.floor(Math.random() * random.message.length)
-            ],
-            color:
-              random.color[Math.floor(Math.random() * random.color.length)],
-            sender:
-              random.sender[Math.floor(Math.random() * random.sender.length)],
-          }),
+          setMessages([
+            {
+              body: random.message[
+                Math.floor(Math.random() * random.message.length)
+              ],
+              color:
+                random.color[Math.floor(Math.random() * random.color.length)],
+              sender:
+                random.sender[Math.floor(Math.random() * random.sender.length)],
+            },
+            ...messages(),
+          ]),
         Math.floor(Math.random() * 10000)
       );
     }
   });
 
-  function send(message?: z.infer<typeof Message>) {
-    if (message) {
-      gun.get("twitch-chat").put(message);
-    } else if (chat().length > 0) {
+  function send() {
+    if (chat().length > 0) {
       gun.get("twitch-chat").put({
         sender: name(),
         color: color(),
